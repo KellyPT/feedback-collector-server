@@ -1,36 +1,11 @@
 // commonJS modules vs ES2015 modules on client side import express from 'express';
 const express = require("express");
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const keys = require("./config/keys");
+require("./services/passport");
 
 // single Express app here. we will use this to set up config
 const app = express();
 
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: keys.googleClientID,
-            clientSecret: keys.googleClientSecret,
-            callbackURL: "/auth/google/callback"
-        },
-        (accessToken, refreshToken, profile, done) => {
-            console.log('accessToken', accessToken);
-            console.log('refreshToken', refreshToken);
-            console.log('profile', profile);
-            console.log('done', done);
-        }
-    )
-);
-
-app.get(
-    "/auth/google",
-    passport.authenticate("google", {
-        scope: ["profile", "email"]
-    })
-);
-
-app.get("/auth/google/callback", passport.authenticate("google"));
+require("./routes/authRoutes")(app);
 
 const PORT = process.env.PORT || 5000; // if there is no environment variable that already defined by Heroku, assign that variable to PORT. otherwise, use the default value of 5000.
 
