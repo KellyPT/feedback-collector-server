@@ -6,6 +6,16 @@ const keys = require("../config/keys");
 // retrieve model class from mongoose with one argument
 const User = mongoose.model("users");
 
+passport.serializeUser((user, done) => {
+    done(null, user.id); // user model instance ID to identify a user who is stored in the database. OAuth's only purpose is to allow someone to sign in. After that, we use our own internal IDs
+});
+
+passport.deserializeUser((id, done) => {
+    User.findById(id).then(user => {
+        done(null, user);
+    });
+});
+
 passport.use(
     new GoogleStrategy(
         {
